@@ -6,7 +6,9 @@
         "device": "*",
         "arcade-mini-menu": "github:riknoll/arcade-mini-menu#v0.1.0",
         "arcade-text": "github:microsoft/arcade-text#v1.3.0",
-        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.6.0"
+        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.6.0",
+        "color-coded-tilemap": "*",
+        "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.1.0"
     },
     "files": [
         "README.md",
