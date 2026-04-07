@@ -8,7 +8,10 @@
         "arcade-text": "github:microsoft/arcade-text#v1.3.0",
         "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.6.0",
         "color-coded-tilemap": "*",
-        "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.1.0"
+        "arcade-character-animations": "github:microsoft/arcade-character-animations#v0.1.0",
+        "servo": "*",
+        "arcade-story": "github:microsoft/arcade-storytelling#v1.0.3",
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.2.1"
     },
     "files": [
         "README.md",
