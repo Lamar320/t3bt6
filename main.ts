@@ -4,21 +4,18 @@ namespace SpriteKind {
     export const npcs = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile16`, function (sprite4, location3) {
-    tiles.setCurrentTilemap(tilemap`level1`)
-    tiles.placeOnTile(sprite4, tiles.getTileLocation(0, 0))
+    level += 1
+    runlevels(level)
+    tiles.placeOnTile(sprite4, tiles.getTileLocation(0, 1))
 })
-scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile15`, function (sprite2, location) {
-    tiles.setCurrentTilemap(tilemap`level7`)
-    tiles.placeOnTile(sprite2, tiles.getTileLocation(0, 6))
-    npc = sprites.create(p1._pickRandom(), SpriteKind.npcs)
-    tiles.placeOnTile(npc, tiles.getTileLocation(7, 7))
-    npc = sprites.create(p2._pickRandom(), SpriteKind.npcs)
-    tiles.placeOnTile(npc, tiles.getTileLocation(6, 7))
-    npc = sprites.create(p3._pickRandom(), SpriteKind.npcs)
-    tiles.placeOnTile(npc, tiles.getTileLocation(5, 7))
+scene.onHitWall(SpriteKind.Player, function (sprite, location) {
+    if (tiles.tileAtLocationEquals(location, sprites.jewels.jewel6)) {
+        tiles.setTileAt(location, assets.tile`myTile5`)
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.npcs, function (sprite, otherSprite) {
-    otherSprite.sayText("hi", 2000, false)
+    otherSprite.sayText(textlist2._pickRandom())
+    pause(999999)
 })
 function show_character_picker2 () {
     let gravity: number;
@@ -117,17 +114,6 @@ scene.centerCameraAt(80, 60)
         `, SpriteKind.Background)
     character_selector_box.z = 101
 }
-scene.onOverlapTile(SpriteKind.Player, sprites.jewels.jewel6, function (sprite5, location4) {
-    if (dialog == false) {
-        game.splash("The infinity stones..")
-        game.splash("Your mission is to collect ")
-        game.splash("them before Thanos ")
-        game.splash("Alright , let's begin")
-        game.splash("go find the team and ")
-        game.splash("come up with a plan")
-        dialog = true
-    }
-})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (showCharacterScreen) {
         thePlayer = sprites.create(currently_selected_character.image, SpriteKind.Player)
@@ -158,6 +144,17 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         current_character_index = (current_character_index + (ourCharacters.length - 1)) % ourCharacters.length
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile19`, function (sprite5, location4) {
+    if (dialog == false) {
+        game.splash("The infinity stones..")
+        game.splash("Your mission is to collect ")
+        game.splash("them before Thanos does")
+        game.splash("Alright , let's begin")
+        game.splash("go find the team and ")
+        game.splash("come up with a plan")
+        dialog = true
+    }
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (showCharacterScreen) {
         current_character_index = (current_character_index + 1) % ourCharacters.length
@@ -169,14 +166,53 @@ spriteutils.createRenderable(100, function (screen2) {
         character_selector_box.setPosition(currently_selected_character.x, currently_selected_character.y)
     }
 })
+function runlevels (levelnum: number) {
+    if (levelnum == 1) {
+        effects.starField.startScreenEffect()
+        tiles.setCurrentTilemap(tilemap`intro`)
+        scene.setBackgroundImage(assets.image`bg1`)
+    } else if (levelnum == 2) {
+        tiles.setCurrentTilemap(tilemap`level12`)
+        scene.setBackgroundImage(assets.image`bg1`)
+        npc = sprites.create(p1._pickRandom(), SpriteKind.npcs)
+        tiles.placeOnTile(npc, tiles.getTileLocation(5, 7))
+        npc = sprites.create(p2._pickRandom(), SpriteKind.npcs)
+        tiles.placeOnTile(npc, tiles.getTileLocation(7, 7))
+        npc = sprites.create(p3._pickRandom(), SpriteKind.npcs)
+        tiles.placeOnTile(npc, tiles.getTileLocation(9, 7))
+    } else if (levelnum == 3) {
+        sprites.destroy(npc)
+        tiles.setCurrentTilemap(tilemap`level1`)
+    } else {
+        game.gameOver(true)
+    }
+}
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile18`, function (sprite2, location) {
+    level += 1
+    runlevels(level)
+    tiles.placeOnTile(sprite2, tiles.getTileLocation(0, 6))
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile7`, function (sprite3, location2) {
+    story.cancelSpriteMovement(currently_selected_character)
     if (dialog2 == false) {
         story.startCutscene(function () {
-            story.printCharacterText("hi", "You")
+            story.printCharacterText("Six stones . One mission . No mistakes", "Cap")
+            story.printCharacterText("I've mapped the timelines - we can grab them before things go sideways", "iron man")
+            story.printCharacterText("Time travel and stealing cosmic rocks ? I like this", "Thor")
+            story.printCharacterText("Just don't mess up the timeline beyond repair ", "Cap")
+            story.printCharacterText("Focus. Tony and I take the mind and time stones . Thor you,re on the power stone , and you take the space and mind stones .", "Cap")
+            story.printCharacterText("Consider it done (;", "You")
+            story.printCharacterText("Finally ,a task worthy of my strength", "Thor")
+            story.printCharacterText("Try not to break the universe, point break", "Ironman")
+            story.printCharacterText("We regroup once we have them all . No detours", "cap")
+            story.printCharacterText("You have my word.", "Thor")
+            story.printCharacterText("Bet.", "You")
+            story.printCharacterText("That's exactly what I was afraid of.", "Ironman")
         })
         dialog2 = true
     }
 })
+let npc: Sprite = null
 let name = false
 let currently_selected_character: Sprite = null
 let thePlayer: Sprite = null
@@ -188,16 +224,16 @@ let giuseppe: Sprite = null
 let textSprite: TextSprite = null
 let corni: Sprite = null
 let showCharacterScreen = false
-let npc: Sprite = null
+let textlist2: string[] = []
 let p3: Image[] = []
 let p2: Image[] = []
 let p1: Image[] = []
 let dialog2 = false
 let dialog = false
-tiles.setCurrentTilemap(tilemap`intro`)
-scene.setBackgroundImage(assets.image`bg1`)
-effects.starField.startScreenEffect()
+let level = 0
 show_character_picker2()
+level = 1
+runlevels(level)
 dialog = false
 dialog2 = false
 p1 = [img`
@@ -219,6 +255,22 @@ p1 = [img`
     . . . . . . . f f f . . . 
     `]
 p2 = [img`
+    e e e . . . . e e e . . . . 
+    c d d c . . c d d c . . . . 
+    c b d d f f d d b c . . . . 
+    c 3 b d d b d b 3 c . . . . 
+    f b 3 d d d d 3 b f . . . . 
+    e d d d d d d d d e . . . . 
+    e d f d d d d f d e . b f b 
+    f d d f d d f d d f . f d f 
+    f b d d b b d d 2 f . f d f 
+    . f 2 2 2 2 2 2 b b f f d f 
+    . f b d d d d d d b b d b f 
+    . f d d d d d b d d f f f . 
+    . f d f f f d f f d f . . . 
+    . f f . . f f . . f f . . . 
+    `]
+p3 = [img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . b 5 b . . . 
     . . . . . . . . . b 5 b . . . . 
@@ -236,19 +288,6 @@ p2 = [img`
     . . c b d d d d d 5 5 5 b b . . 
     . . . c c c c c c c c b b . . . 
     `]
-p3 = [img`
-    e e e . . . . e e e . . . . 
-    c d d c . . c d d c . . . . 
-    c b d d f f d d b c . . . . 
-    c 3 b d d b d b 3 c . . . . 
-    f b 3 d d d d 3 b f . . . . 
-    e d d d d d d d d e . . . . 
-    e d f d d d d f d e . b f b 
-    f d d f d d f d d f . f d f 
-    f b d d b b d d 2 f . f d f 
-    . f 2 2 2 2 2 2 b b f f d f 
-    . f b d d d d d d b b d b f 
-    . f d d d d d b d d f f f . 
-    . f d f f f d f f d f . . . 
-    . f f . . f f . . f f . . . 
-    `]
+textlist2 = ["Goodluck twin"]
+textlist2 = ["Don't mess up!"]
+textlist2 = ["Ouch! you stepped on my leg!"]
