@@ -1,12 +1,21 @@
+enum ActionKind {
+    Walking,
+    Idle,
+    Jumping
+}
 namespace SpriteKind {
     export const SelectableCharacter = SpriteKind.create()
     export const Background = SpriteKind.create()
     export const npcs = SpriteKind.create()
+    export const ship = SpriteKind.create()
+    export const npcs1 = SpriteKind.create()
+    export const npcs2 = SpriteKind.create()
+    export const npcs3 = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile16`, function (sprite4, location3) {
     level += 1
-    runlevels(level)
-    tiles.placeOnTile(sprite4, tiles.getTileLocation(0, 1))
+    tiles.placeOnTile(sprite4, tiles.getTileLocation(0, 2))
+    runlevel(level)
 })
 scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     if (tiles.tileAtLocationEquals(location, sprites.jewels.jewel6)) {
@@ -14,8 +23,17 @@ scene.onHitWall(SpriteKind.Player, function (sprite, location) {
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.npcs, function (sprite, otherSprite) {
-    otherSprite.sayText(textlist2._pickRandom())
-    pause(999999)
+    otherSprite.sayText(textlist2[0])
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.npcs3, function (sprite, otherSprite) {
+    if (dialog_3 == false) {
+        story.startCutscene(function () {
+            controller.moveSprite(sprite, 0, 0)
+            story.printCharacterText("The weather seems off..", "You")
+            controller.moveSprite(sprite, 100, 0)
+        })
+        dialog_3 = true
+    }
 })
 function show_character_picker2 () {
     let gravity: number;
@@ -114,6 +132,9 @@ scene.centerCameraAt(80, 60)
         `, SpriteKind.Background)
     character_selector_box.z = 101
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile22`, function (sprite, location) {
+    sprite.sayText("My bad </3", 500, false)
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (showCharacterScreen) {
         thePlayer = sprites.create(currently_selected_character.image, SpriteKind.Player)
@@ -139,10 +160,301 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         name = true
     }
 })
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile7`, function (sprite, location) {
+    if (dialog2 == false) {
+        story.startCutscene(function () {
+            controller.moveSprite(sprite, 0, 0)
+            story.printCharacterText("Six stones . One mission . No mistakes", "Cap")
+            story.printCharacterText("I've mapped the timelines - we can grab them before things go sideways", "iron man")
+            story.printCharacterText("Time travel and stealing cosmic rocks ? I like this", "Thor")
+            story.printCharacterText("Just don't mess up the timeline beyond repair ", "Cap")
+            story.printCharacterText("Focus. Tony and I take the mind and time stones . Thor you,re on the power stone , and you take the space and mind stones .", "Cap")
+            story.printCharacterText("Consider it done (;", "You")
+            story.printCharacterText("Finally ,a task worthy of my strength", "Thor")
+            story.printCharacterText("Try not to break the universe, point break", "Ironman")
+            story.printCharacterText("We regroup once we have them all . No detours", "cap")
+            story.printCharacterText("You have my word.", "Thor")
+            story.printCharacterText("Bet.", "You")
+            story.printCharacterText("That's exactly what I was afraid of.", "Ironman")
+            controller.moveSprite(sprite, 100, 0)
+        })
+        dialog2 = true
+    }
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     if (showCharacterScreen) {
         current_character_index = (current_character_index + (ourCharacters.length - 1)) % ourCharacters.length
     }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.npcs1, function (sprite, otherSprite) {
+    otherSprite.sayText(textlist2[1])
+})
+function runlevel (level: number) {
+    if (level == 1) {
+        effects.starField.startScreenEffect()
+        tiles.setCurrentTilemap(tilemap`intro`)
+        scene.setBackgroundImage(assets.image`bg0`)
+    } else if (level == 2) {
+        tiles.setCurrentTilemap(tilemap`level12`)
+        scene.setBackgroundImage(assets.image`bg0`)
+        npc = sprites.create(list[0], SpriteKind.npcs)
+        tiles.placeOnTile(npc, tiles.getTileLocation(5, 7))
+        npc = sprites.create(list[1], SpriteKind.npcs1)
+        tiles.placeOnTile(npc, tiles.getTileLocation(7, 7))
+        npc = sprites.create(list[2], SpriteKind.npcs2)
+        tiles.placeOnTile(npc, tiles.getTileLocation(9, 7))
+    } else if (level == 3) {
+        sprites.destroyAllSpritesOfKind(SpriteKind.npcs)
+        sprites.destroyAllSpritesOfKind(SpriteKind.npcs1)
+        sprites.destroyAllSpritesOfKind(SpriteKind.npcs2)
+        effects.blizzard.startScreenEffect()
+        scene.setBackgroundImage(assets.image`bg1`)
+        tiles.setCurrentTilemap(tilemap`level15`)
+        npc = sprites.create(list[3], SpriteKind.npcs3)
+        tiles.placeOnTile(npc, tiles.getTileLocation(22, 5))
+    } else if (level == 4) {
+        scene.setBackgroundImage(assets.image`bg1`)
+        tiles.setCurrentTilemap(tilemap`level13`)
+        asteroids = [
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . c c c . . . . . . 
+            . . . . . . a b a a . . . . . . 
+            . . . . . c b a f c a c . . . . 
+            . . . . c b b b f f a c c . . . 
+            . . . . b b f a b b a a c . . . 
+            . . . . c b f f b a f c a . . . 
+            . . . . . c a a c b b a . . . . 
+            . . . . . . c c c c . . . . . . 
+            . . . . . . . c . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . c c . . . . . . 
+            . . . . . c a a a a . . . . . . 
+            . . . . . a a f f b a . . . . . 
+            . . . . c a b f f c b . . . . . 
+            . . . . c b b b a f c b . . . . 
+            . . . . c b a c a b b b . . . . 
+            . . . . . b b f f a a c . . . . 
+            . . . . . . a a b b c . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . c c . . . . . . . 
+            . . . . c a a a a . . . . . . . 
+            . . . . a a f f b a . . . . . . 
+            . . . c a b f f c b . . . . . . 
+            . . . c b b b a f c b . . . . . 
+            . . . c b a c a b b b . . . . . 
+            . . . . b b f f a a c . . . . . 
+            . . . . . a a b b c . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . c . . . . . . . . 
+            . . . . c a a a c . . . . . . . 
+            . . . c c f a b b c . . . . . . 
+            . . . b f f b f a a . . . . . . 
+            . . . b b a b f f a . . . . . . 
+            . . . c b f b b a c . . . . . . 
+            . . . . b a f c c . . . . . . . 
+            . . . . . b b c . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . . c c 8 . . . . 
+            . . . . . . 8 c c c f 8 c c . . 
+            . . . c c 8 8 f c a f f f c c . 
+            . . c c c f f f c a a f f c c c 
+            8 c c c f f f f c c a a c 8 c c 
+            c c c b f f f 8 a c c a a a c c 
+            c a a b b 8 a b c c c c c c c c 
+            a f c a a b b a c c c c c f f c 
+            a 8 f c a a c c a c a c f f f c 
+            c a 8 a a c c c c a a f f f 8 a 
+            . a c a a c f f a a b 8 f f c a 
+            . . c c b a f f f a b b c c 6 c 
+            . . . c b b a f f 6 6 a b 6 c . 
+            . . . c c b b b 6 6 a c c c c . 
+            . . . . c c a b b c c c . . . . 
+            . . . . . c c c c c c . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . c c c c . . 
+            . c c c c c . c c c c c f c c . 
+            c c a c c c c c 8 f f c f f c c 
+            c a f a a c c a f f c a a f f c 
+            c a 8 f a a c a c c c a a a a c 
+            c b c f a a a a a c c c c c c c 
+            c b b a a c f 8 a c c c 8 c c c 
+            . c b b a b c f a a a 8 8 c c . 
+            . . . . a a b b b a a 8 a c . . 
+            . . . . c b c a a c c b . . . . 
+            . . . . b b c c a b b a . . . . 
+            . . . . b b a b a 6 a . . . . . 
+            . . . . c b b b 6 6 c . . . . . 
+            . . . . . c a 6 6 b c . . . . . 
+            . . . . . . . c c c . . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . c b a c . . . . . . 
+            . . . . c c b c f a c . . . . . 
+            . . . . a f b b b a c . . . . . 
+            . . . . a f f b a f c c . . . . 
+            . . . . c b b a f f c . . . . . 
+            . . . . . b b a f a . . . . . . 
+            . . . . . . c b b . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . c c . . . . . . . . 
+            . . . . c a f b c . . . . . . . 
+            . . . . b f f b c c . . . . . . 
+            . . . a a f b a b a c . . . . . 
+            . . . c a c b b f f b . . . . . 
+            . . . . b f f b f a b . . . . . 
+            . . . . a f f b b b a . . . . . 
+            . . . . . a b b c c . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `,
+        img`
+            . . . . . . . . c c c c . . . . 
+            . . . . c c c c c c c c c . . . 
+            . . . c f c c a a a a c a c . . 
+            . . c c f f f f a a a c a a c . 
+            . . c c a f f c a a f f f a a c 
+            . . c c a a a a b c f f f a a c 
+            . c c c c a c c b a f c a a c c 
+            c a f f c c c a b b 6 b b b c c 
+            c a f f f f c c c 6 b b b a a c 
+            c a a c f f c a 6 6 b b b a a c 
+            c c b a a a a b 6 b b a b b a . 
+            . c c b b b b b b b a c c b a . 
+            . . c c c b c c c b a a b c . . 
+            . . . . c b a c c b b b c . . . 
+            . . . . c b b a a 6 b c . . . . 
+            . . . . . . b 6 6 c c . . . . . 
+            `,
+        img`
+            . . . . . . . c c c a c . . . . 
+            . . c c b b b a c a a a c . . . 
+            . c c a b a c b a a a b c c . . 
+            . c a b c f f f b a b b b a . . 
+            . c a c f f f 8 a b b b b b a . 
+            . c a 8 f f 8 c a b b b b b a . 
+            c c c a c c c c a b c f a b c c 
+            c c a a a c c c a c f f c b b a 
+            c c a b 6 a c c a f f c c b b a 
+            c a b c 8 6 c c a a a b b c b c 
+            c a c f f a c c a f a c c c b . 
+            c a 8 f c c b a f f c b c c c . 
+            . c b c c c c b f c a b b a c . 
+            . . a b b b b b b b b b b b c . 
+            . . . c c c c b b b b b c c . . 
+            . . . . . . . . c b b c . . . . 
+            `,
+        img`
+            . . . . . . c c c . . . . . . . 
+            . . . . . a a a c c c . . . . . 
+            . . . c a c f a a a a c . . . . 
+            . . c a c f f f a f f a c . . . 
+            . c c a c c f a a c f f a c . . 
+            . a b a a c 6 a a c c f a c c c 
+            . a b b b 6 a b b a a c a f f c 
+            . . a b b a f f b b a a c f f c 
+            c . a a a c c f c b a a c f a c 
+            c c a a a c c a a a b b a c a c 
+            a c a b b a a 6 a b b 6 b b c . 
+            b a c b b b 6 b c . c c a c . . 
+            b a c c a b b a c . . . . . . . 
+            b b a c a b a a . . . . . . . . 
+            a b 6 b b a c . . . . . . . . . 
+            . a a b c . . . . . . . . . . . 
+            `
+        ]
+        spaceship = sprites.create(img`
+            8 8 . . . . . . . . . . . . . . 
+            8 8 8 . . . . . . . . . . . . . 
+            8 8 8 8 . . . . . . . . . . . . 
+            8 8 8 f . . . . . . . . . . . . 
+            8 8 8 f 8 . . . . . . . . . . . 
+            8 8 a f 8 c . . . . . . . . . . 
+            a a a c 3 c 8 8 . . . . . . . . 
+            a a 3 c 3 c 3 8 8 f c f c c c c 
+            3 3 3 a 3 a 1 1 3 f 3 f b d d d 
+            3 3 3 a 1 a a a . . . . . . . . 
+            3 3 3 f a a . . . . . . . . . . 
+            3 1 1 f a . . . . . . . . . . . 
+            1 3 3 a . . . . . . . . . . . . 
+            3 3 a a . . . . . . . . . . . . 
+            a a a . . . . . . . . . . . . . 
+            a a . . . . . . . . . . . . . . 
+            `, SpriteKind.ship)
+        spaceship.left = 5
+        controller.moveSprite(spaceship, 0, 100)
+        spaceship.setStayInScreen(true)
+    } else if (level == 5) {
+        game.setGameOverMessage(true, "GAME OVER!")
+        tiles.setCurrentTilemap(tilemap`level13`)
+    } else if (false) {
+    	
+    } else {
+    	
+    }
+}
+info.onScore(2, function () {
+    level += 1
+    runlevel(level)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.npcs2, function (sprite, otherSprite) {
+    otherSprite.sayText(textlist2[2])
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.builtin.coral4, function (sprite, location) {
+    tiles.placeOnTile(sprite, tiles.getTileLocation(0, 2))
+    game.splash("oops")
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile19`, function (sprite5, location4) {
     if (dialog == false) {
@@ -166,52 +478,27 @@ spriteutils.createRenderable(100, function (screen2) {
         character_selector_box.setPosition(currently_selected_character.x, currently_selected_character.y)
     }
 })
-function runlevels (levelnum: number) {
-    if (levelnum == 1) {
-        effects.starField.startScreenEffect()
-        tiles.setCurrentTilemap(tilemap`intro`)
-        scene.setBackgroundImage(assets.image`bg1`)
-    } else if (levelnum == 2) {
-        tiles.setCurrentTilemap(tilemap`level12`)
-        scene.setBackgroundImage(assets.image`bg1`)
-        npc = sprites.create(p1._pickRandom(), SpriteKind.npcs)
-        tiles.placeOnTile(npc, tiles.getTileLocation(5, 7))
-        npc = sprites.create(p2._pickRandom(), SpriteKind.npcs)
-        tiles.placeOnTile(npc, tiles.getTileLocation(7, 7))
-        npc = sprites.create(p3._pickRandom(), SpriteKind.npcs)
-        tiles.placeOnTile(npc, tiles.getTileLocation(9, 7))
-    } else if (levelnum == 3) {
-        sprites.destroy(npc)
-        tiles.setCurrentTilemap(tilemap`level1`)
-    } else {
-        game.gameOver(true)
-    }
-}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile18`, function (sprite2, location) {
     level += 1
-    runlevels(level)
+    runlevel(level)
     tiles.placeOnTile(sprite2, tiles.getTileLocation(0, 6))
 })
-scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile7`, function (sprite3, location2) {
-    story.cancelSpriteMovement(currently_selected_character)
-    if (dialog2 == false) {
-        story.startCutscene(function () {
-            story.printCharacterText("Six stones . One mission . No mistakes", "Cap")
-            story.printCharacterText("I've mapped the timelines - we can grab them before things go sideways", "iron man")
-            story.printCharacterText("Time travel and stealing cosmic rocks ? I like this", "Thor")
-            story.printCharacterText("Just don't mess up the timeline beyond repair ", "Cap")
-            story.printCharacterText("Focus. Tony and I take the mind and time stones . Thor you,re on the power stone , and you take the space and mind stones .", "Cap")
-            story.printCharacterText("Consider it done (;", "You")
-            story.printCharacterText("Finally ,a task worthy of my strength", "Thor")
-            story.printCharacterText("Try not to break the universe, point break", "Ironman")
-            story.printCharacterText("We regroup once we have them all . No detours", "cap")
-            story.printCharacterText("You have my word.", "Thor")
-            story.printCharacterText("Bet.", "You")
-            story.printCharacterText("That's exactly what I was afraid of.", "Ironman")
-        })
-        dialog2 = true
-    }
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.ship, function (sprite, otherSprite) {
+    game.gameOver(false)
 })
+sprites.onDestroyed(SpriteKind.Projectile, function (sprite) {
+    info.changeScoreBy(1)
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile26`, function (sprite4, location3) {
+    level += 1
+    runlevel(level)
+    tiles.placeOnTile(sprite4, tiles.getTileLocation(13, 0))
+    sprite4.setFlag(SpriteFlag.Invisible, true)
+    controller.moveSprite(sprite4, 0, 0)
+})
+let asteroeid: Sprite = null
+let spaceship: Sprite = null
+let asteroids: Image[] = []
 let npc: Sprite = null
 let name = false
 let currently_selected_character: Sprite = null
@@ -225,18 +512,19 @@ let textSprite: TextSprite = null
 let corni: Sprite = null
 let showCharacterScreen = false
 let textlist2: string[] = []
-let p3: Image[] = []
-let p2: Image[] = []
-let p1: Image[] = []
+let list: Image[] = []
+let dialog_3 = false
 let dialog2 = false
 let dialog = false
 let level = 0
 show_character_picker2()
 level = 1
-runlevels(level)
+runlevel(level)
 dialog = false
 dialog2 = false
-p1 = [img`
+dialog_3 = false
+list = [
+img`
     . . . . . . . . . . . . . 
     . . . . f f f f . . . . . 
     . . f f f f f f f f . . . 
@@ -253,8 +541,8 @@ p1 = [img`
     . . e e 6 6 6 6 6 f . . . 
     . . . f f f f f f f . . . 
     . . . . . . . f f f . . . 
-    `]
-p2 = [img`
+    `,
+img`
     e e e . . . . e e e . . . . 
     c d d c . . c d d c . . . . 
     c b d d f f d d b c . . . . 
@@ -269,8 +557,8 @@ p2 = [img`
     . f d d d d d b d d f f f . 
     . f d f f f d f f d f . . . 
     . f f . . f f . . f f . . . 
-    `]
-p3 = [img`
+    `,
+img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . b 5 b . . . 
     . . . . . . . . . b 5 b . . . . 
@@ -287,7 +575,46 @@ p3 = [img`
     . c d d d d d d 5 5 5 5 5 d b . 
     . . c b d d d d d 5 5 5 b b . . 
     . . . c c c c c c c c b b . . . 
-    `]
-textlist2 = ["Goodluck twin"]
-textlist2 = ["Don't mess up!"]
-textlist2 = ["Ouch! you stepped on my leg!"]
+    `,
+img`
+    ...........ccccc66666...........
+    ........ccc4444444444666........
+    ......cc444444444bb4444466......
+    .....cb4444bb4444b5b444444b.....
+    ....eb4444b5b44444b44444444b....
+    ...ebb44444b4444444444b444446...
+    ..eb6bb444444444bb444b5b444446..
+    ..e6bb5b44444444b5b444b44bb44e..
+    .e66b4b4444444444b4444444b5b44e.
+    .e6bb444444444444444444444bb44e.
+    eb66b44444bb444444444444444444be
+    eb66bb444b5b44444444bb44444444be
+    fb666b444bb444444444b5b4444444bf
+    fcb666b44444444444444bb444444bcf
+    .fbb6666b44444444444444444444bf.
+    .efbb66666bb4444444444444444bfe.
+    .86fcbb66666bbb44444444444bcc688
+    8772effcbbbbbbbbbbbbbbbbcfc22778
+    87722222cccccccccccccccc22226678
+    f866622222222222222222222276686f
+    fef866677766667777776667777fffef
+    fbff877768f86777777666776fffffbf
+    fbeffeefffeff7766688effeeeefeb6f
+    f6bfffeffeeeeeeeeeeeeefeeeeebb6e
+    f66ddfffffeeeffeffeeeeeffeedb46e
+    .c66ddd4effffffeeeeeffff4ddb46e.
+    .fc6b4dddddddddddddddddddb444ee.
+    ..ff6bb444444444444444444444ee..
+    ....ffbbbb4444444444444444ee....
+    ......ffebbbbbb44444444eee......
+    .........fffffffcccccee.........
+    ................................
+    `
+]
+textlist2 = ["Goodluck twin", "Don't mess up!", "Ouch! you stepped on my leg!"]
+game.onUpdateInterval(1000, function () {
+    if (level == 4) {
+        asteroeid = sprites.createProjectileFromSide(asteroids._pickRandom(), randint(-30, -70), 0)
+        asteroeid.y = randint(0, 120)
+    }
+})
